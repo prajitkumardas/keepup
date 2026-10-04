@@ -1,56 +1,43 @@
-# Welcome to your Expo app 👋
+# KeepUp
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+KeepUp is a mobile-first personal attention manager for actions, expiries, renewals, return windows, warranties, and other responsibilities that matter later.
 
-## Get started
+This repository currently contains the first production-shaped application slice built from the KeepUp PRD, design guideline, and technical requirements:
 
-1. Install dependencies
+- Expo SDK 57, React Native, Expo Router, and strict TypeScript
+- Five-destination navigation: Today, Library, Add, Upcoming, and Search
+- Shared light/dark semantic design tokens and reusable UI primitives
+- Centralized date-only attention-state calculation
+- Action completion, undo, and snooze interactions
+- Tracker filtering, search, details, provenance, and reminder editing
+- Deterministic text capture with user confirmation and no fabricated dates
+- Externalized English UI copy, ready for additional locales
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run locally
 
 ```bash
-npm run reset-project
+npm install
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Useful targets:
 
-### Other setup steps
+```bash
+npm run android
+npm run ios
+npm run web
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Validate
 
-## Learn more
+```bash
+npm run typecheck
+npm run lint
+npx expo-doctor
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Architecture
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Routes live in `src/app`. Domain rules, state, features, reusable components, and design-system code remain outside the route tree. See [docs/architecture.md](docs/architecture.md) for the current boundaries and the next implementation milestones.
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+The current Zustand store is intentionally an in-memory product slice. SQLite persistence, the explicit sync queue, Supabase authentication/RLS, private source storage, native capture, notifications, and provider-backed OCR/AI are not represented as production-complete integrations yet.
