@@ -1,7 +1,8 @@
-import { useColorScheme } from 'react-native';
+import { useKeepUpStore } from '@/store/keepup-store';
+
 import { darkColors, lightColors } from './tokens';
 
 export function useAppTheme() {
-  const isDark = useColorScheme() === 'dark';
+  const isDark = useKeepUpStore((state) => state.profile.themeMode === 'dark');
   return { colors: isDark ? darkColors : lightColors, isDark };
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Clock3, Info, RotateCcw } from 'lucide-react-native';
+import { router } from 'expo-router';
+import { ChevronRight, Clock3, Info, Paperclip } from 'lucide-react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/design-system/app-text';
+import { CategoryIcon } from '@/components/category-icon';
 import { Button } from '@/design-system/button';
 import { StatusBadge } from '@/design-system/status-badge';
 import { radii, spacing } from '@/design-system/tokens';
@@ -23,8 +25,11 @@ export function AttentionCard({ action, tracker }: { action: Action; tracker?: T
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <View style={styles.topRow}><StatusBadge state={state} />{date ? <AppText variant="caption" tone="secondary">{formatDateOnly(date, { day: 'numeric', month: 'short' })}</AppText> : null}</View>
-      <View style={styles.copy}><AppText variant="h3">{tracker?.title ?? action.title}</AppText><AppText tone="secondary">{context.charAt(0).toUpperCase() + context.slice(1)}.</AppText></View>
+      <Pressable accessibilityLabel={`Open ${action.title}`} accessibilityRole="button" onPress={() => router.push({ pathname: '/action/[id]', params: { id: action.id } })} style={({ pressed }) => [styles.detailsLink, pressed && { opacity: 0.7 }]}>
+        <View style={styles.topRow}><StatusBadge state={state} />{date ? <AppText variant="caption" tone="secondary">{formatDateOnly(date)}</AppText> : null}</View>
+        <View style={styles.titleRow}><CategoryIcon iconKey={(tracker?.category ?? action.category).icon} colorKey={(tracker?.category ?? action.category).color} size={42} /><View style={styles.copy}><AppText variant="h3">{tracker?.title ?? action.title}</AppText><AppText tone="secondary">{(tracker?.category ?? action.category).name} · {context.charAt(0).toUpperCase() + context.slice(1)}.</AppText></View><ChevronRight color={colors.textTertiary} size={20} /></View>
+        {action.source ? <View style={[styles.source, { backgroundColor: colors.surfaceSecondary }]}><Paperclip color={colors.safe} size={17} /><AppText variant="bodySmall" numberOfLines={1} style={styles.sourceName}>{action.source.fileName}</AppText><AppText variant="caption" style={{ color: colors.safe }}>{copy.capture.savedSource}</AppText></View> : null}
+      </Pressable>
       <Pressable accessibilityRole="button" accessibilityState={{ expanded: showWhy }} onPress={() => setShowWhy((value) => !value)} style={styles.whyButton}><Info color={colors.textSecondary} size={17} /><AppText variant="bodySmall" tone="secondary">{copy.today.whyNow}</AppText></Pressable>
       {showWhy ? <View style={[styles.explanation, { backgroundColor: colors.surfaceSecondary }]}><AppText variant="bodySmall" tone="secondary">{tracker ? copy.today.reminderReason(tracker.reminderPolicy.attentionDays) : copy.today.scheduledReason}</AppText></View> : null}
       <Button label={action.title} onPress={() => completeAction(action.id)} />
@@ -33,17 +38,9 @@ export function AttentionCard({ action, tracker }: { action: Action; tracker?: T
   );
 }
 
-export function UndoCompletion() {
-  const { colors } = useAppTheme();
-  const actionId = useKeepUpStore((state) => state.lastCompletedActionId);
-  const undo = useKeepUpStore((state) => state.undoLastCompletion);
-  if (!actionId) return null;
-  return <View style={[styles.undo, { backgroundColor: colors.textPrimary }]}><AppText variant="bodySmall" style={{ color: colors.background }}>{copy.today.completed}</AppText><Pressable accessibilityRole="button" onPress={undo} style={styles.undoButton}><RotateCcw color={colors.background} size={16} /><AppText variant="label" style={{ color: colors.background }}>{copy.today.undo}</AppText></Pressable></View>;
-}
-
 const styles = StyleSheet.create({
-  card: { borderWidth: 1, borderRadius: radii.lg, padding: spacing[5], gap: spacing[4] }, topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing[3] }, copy: { gap: spacing[1] },
+  card: { borderWidth: 1, borderRadius: radii.lg, padding: spacing[5], gap: spacing[4] }, topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing[3] }, copy: { flex: 1, gap: spacing[1] },
+  detailsLink: { gap: spacing[4] }, titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[3] },
   whyButton: { minHeight: 44, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: spacing[2] }, explanation: { borderRadius: radii.md, padding: spacing[3] },
-  undo: { marginHorizontal: spacing[5], marginBottom: spacing[3], minHeight: 52, paddingHorizontal: spacing[4], borderRadius: radii.md, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  undoButton: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: spacing[2], paddingHorizontal: spacing[2] },
+  source: { minHeight: 44, borderRadius: radii.md, paddingHorizontal: spacing[3], flexDirection: 'row', alignItems: 'center', gap: spacing[2] }, sourceName: { flex: 1 },
 });

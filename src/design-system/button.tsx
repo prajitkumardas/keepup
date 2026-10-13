@@ -6,7 +6,7 @@ import { AppText } from './app-text';
 import { radii, spacing } from './tokens';
 import { useAppTheme } from './theme';
 
-interface ButtonProps extends Omit<ComponentProps<typeof Pressable>, 'children'> { label: string; variant?: 'primary' | 'secondary' | 'tertiary'; icon?: ReactNode; }
+interface ButtonProps extends Omit<ComponentProps<typeof Pressable>, 'children'> { label: string; variant?: 'primary' | 'secondary' | 'tertiary' | 'danger'; icon?: ReactNode; }
 
 export function Button({ label, variant = 'primary', icon, disabled, onPress, style, ...props }: ButtonProps) {
   const { colors } = useAppTheme();
@@ -21,10 +21,11 @@ export function Button({ label, variant = 'primary', icon, disabled, onPress, st
         variant === 'primary' && { backgroundColor: state.pressed ? colors.actionPrimaryPressed : colors.actionPrimary },
         variant === 'secondary' && { backgroundColor: state.pressed ? colors.surfaceSecondary : colors.surface, borderColor: colors.borderStrong, borderWidth: 1 },
         variant === 'tertiary' && { backgroundColor: state.pressed ? colors.actionSoft : 'transparent' },
+        variant === 'danger' && { backgroundColor: colors.overdue, opacity: state.pressed ? 0.8 : 1 },
         disabled && { opacity: 0.45 },
         typeof style === 'function' ? style(state) : style,
       ]}>
-      <View style={styles.content}>{icon}<AppText variant="label" style={{ color: variant === 'primary' ? '#FFFFFF' : colors.textPrimary }}>{label}</AppText></View>
+      <View style={styles.content}>{icon}<AppText variant="label" style={{ color: variant === 'primary' || variant === 'danger' ? '#FFFFFF' : colors.textPrimary }}>{label}</AppText></View>
     </Pressable>
   );
 }
